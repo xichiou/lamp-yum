@@ -33,7 +33,7 @@
 ## 如何安装
 ### 第一步，下载、解压、赋予权限：
 
-    yum install -y unzip
+    yum install -y unzip wget
     wget --no-check-certificate https://github.com/teddysun/lamp-yum/archive/master.zip -O lamp-yum.zip
     unzip lamp-yum.zip
     cd lamp-yum-master/
