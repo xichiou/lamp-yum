@@ -34,7 +34,7 @@
 ### 第一步，下载、解压、赋予权限：
 
     yum install -y unzip wget
-    wget --no-check-certificate https://github.com/teddysun/lamp-yum/archive/master.zip -O lamp-yum.zip
+    wget --no-check-certificate https://github.com/xichiou/lamp-yum/archive/master.zip -O lamp-yum.zip
     unzip lamp-yum.zip
     cd lamp-yum-master/
     chmod +x *.sh
@@ -56,11 +56,11 @@
 ##命令一览：
 * MySQL 或 MariaDB 命令: 
 
-        /etc/init.d/mysqld (start|stop|restart|reload|status)
+        systemctl (start|stop|restart|reload|status) mariadb
 
 * Apache 命令: 
 
-        /etc/init.d/httpd (start|stop|restart|reload|status)
+        systemctl (start|stop|restart|reload|status) httpd
 
 如果你在安装后使用遇到问题，请访问 [https://teddysun.com/lamp-yum](https://teddysun.com/lamp-yum) 提交评论。
 
