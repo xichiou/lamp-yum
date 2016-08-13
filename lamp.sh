@@ -38,10 +38,10 @@ function install_lamp(){
     echo ""
     echo 'Congratulations, Yum install LAMP completed!'
     echo "Your Default Website: http://${IP}"
-    echo 'Default WebSite Root Dir: /data/www/default'
+    #echo 'Default WebSite Root Dir: /data/www/default'
     echo "MySQL root password:$dbrootpwd"
     echo ""
-    echo "Welcome to visit:https://teddysun.com/lamp-yum"
+    #echo "Welcome to visit:https://teddysun.com/lamp-yum"
     echo "Enjoy it! "
     echo ""
 }
@@ -76,16 +76,6 @@ function pre_installation_settings(){
     #if [ $? -ne 0 ]; then
     #    wget -qO- http://www.atomicorp.com/installers/atomic | bash
     #fi
-    
-    yum -y install unzip wget
-    yum -y install epel-release
-    wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-    rpm -Uvh remi-release-7*.rpm
-    
-    cd /etc/yum.repos.d
-    sed -i '21,29 s/enabled=0/enabled=1/g' remi.repo
-    
-    yum -y update
     
     # Display Public IP
     echo "Getting Public IP address..."
@@ -124,6 +114,17 @@ function pre_installation_settings(){
     # Set timezone
     ## rm -f /etc/localtime
     ## ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    
+    yum -y install unzip wget
+    yum -y install epel-release
+    wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+    rpm -Uvh remi-release-7*.rpm
+    
+    cd /etc/yum.repos.d
+    sed -i '21,29 s/enabled=0/enabled=1/g' remi.repo
+    
+    yum -y update
+    
     yum -y install ntp
     ## ntpdate -d cn.pool.ntp.org
     ntpdate -d tick.stdtime.gov.tw
