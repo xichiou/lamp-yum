@@ -177,7 +177,8 @@ function install_apache(){
     yum -y install httpd
     #cp -f $cur_dir/conf/httpd.conf /etc/httpd/conf/httpd.conf
     #rm -f /etc/httpd/conf.d/welcome.conf /data/www/error/noindex.html
-    chkconfig httpd on
+    systemctl enable httpd
+    systemctl start httpd
     #mkdir -p /data/www/default
     #chown -R apache:apache /data/www/default
     #touch /etc/httpd/conf.d/none.conf
@@ -204,9 +205,10 @@ function install_mariadb(){
     echo "Start Installing MariaDB..."
     yum -y install mariadb mariadb-server
     #cp -f $cur_dir/conf/my.cnf /etc/my.cnf
-    chkconfig mysqld on
+    #chkconfig mysqld on
+    systemctl enable mariadb
     # Start mysqld service
-    service mysqld start
+    systemctl start mariadb
     /usr/bin/mysqladmin password $dbrootpwd
     /usr/bin/mysql -uroot -p$dbrootpwd <<EOF
 drop database if exists test;
