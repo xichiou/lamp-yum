@@ -243,7 +243,7 @@ EOF
 # Install PHP
 function install_php(){
     echo "Start Installing PHP..."
-    yum install php php-gd php-mysql php-mcrypt
+    yum -y install php php-gd php-mysql php-mcrypt
 
     #cp -f $cur_dir/conf/php.ini /etc/php.ini
     echo "PHP install completed!"
