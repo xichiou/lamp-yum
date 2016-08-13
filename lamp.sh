@@ -84,7 +84,7 @@ function pre_installation_settings(){
     cd /etc/yum.repos.d
     sed -i '21,29 s/enabled=0/enabled=1/g' remi.repo
     
-    yum update
+    yum -y update
     
     # Display Public IP
     echo "Getting Public IP address..."
