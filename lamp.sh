@@ -71,10 +71,21 @@ function pre_installation_settings(){
     echo "#############################################################"
     echo ""
     # Install Atomic repository
-    rpm -qa | grep "atomic-release" &>/dev/null
-    if [ $? -ne 0 ]; then
-        wget -qO- http://www.atomicorp.com/installers/atomic | bash
-    fi
+    #rpm -qa | grep "atomic-release" &>/dev/null
+    #if [ $? -ne 0 ]; then
+    #    wget -qO- http://www.atomicorp.com/installers/atomic | bash
+    #fi
+    
+    yum -y install unzip wget
+    yum -y install epel-release
+    wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+    rpm -Uvh remi-release-7*.rpm
+    
+    cd /etc/yum.repos.d
+    sed -i '21,29 s/enabled=0/enabled=1/g' remi.repo
+    
+    yum update
+    
     # Display Public IP
     echo "Getting Public IP address..."
     getIP
@@ -147,10 +158,10 @@ function pre_installation_settings(){
     echo "Press any key to start...or Press Ctrl+C to cancel"
     char=`get_char`
     # Remove Packages
-    yum -y remove httpd*
-    yum -y remove mysql*
-    yum -y remove mariadb*
-    yum -y remove php*
+    #yum -y remove httpd*
+    #yum -y remove mysql*
+    #yum -y remove mariadb*
+    #yum -y remove php*
     # Set timezone
     ## rm -f /etc/localtime
     ## ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -164,17 +175,17 @@ function install_apache(){
     # Install Apache
     echo "Start Installing Apache..."
     yum -y install httpd
-    cp -f $cur_dir/conf/httpd.conf /etc/httpd/conf/httpd.conf
-    rm -f /etc/httpd/conf.d/welcome.conf /data/www/error/noindex.html
+    #cp -f $cur_dir/conf/httpd.conf /etc/httpd/conf/httpd.conf
+    #rm -f /etc/httpd/conf.d/welcome.conf /data/www/error/noindex.html
     chkconfig httpd on
-    mkdir -p /data/www/default
-    chown -R apache:apache /data/www/default
-    touch /etc/httpd/conf.d/none.conf
-    cp -f $cur_dir/conf/index.html /data/www/default/index.html
-    cp -f $cur_dir/conf/lamp.gif /data/www/default/lamp.gif
-    cp -f $cur_dir/conf/p.php /data/www/default/p.php
-    cp -f $cur_dir/conf/jquery.js /data/www/default/jquery.js
-    cp -f $cur_dir/conf/phpinfo.php /data/www/default/phpinfo.php
+    #mkdir -p /data/www/default
+    #chown -R apache:apache /data/www/default
+    #touch /etc/httpd/conf.d/none.conf
+    #cp -f $cur_dir/conf/index.html /data/www/default/index.html
+    #cp -f $cur_dir/conf/lamp.gif /data/www/default/lamp.gif
+    #cp -f $cur_dir/conf/p.php /data/www/default/p.php
+    #cp -f $cur_dir/conf/jquery.js /data/www/default/jquery.js
+    #cp -f $cur_dir/conf/phpinfo.php /data/www/default/phpinfo.php
     echo "Apache Install completed!"
 }
 
@@ -192,7 +203,7 @@ function install_mariadb(){
     # Install MariaDB
     echo "Start Installing MariaDB..."
     yum -y install mariadb mariadb-server
-    cp -f $cur_dir/conf/my.cnf /etc/my.cnf
+    #cp -f $cur_dir/conf/my.cnf /etc/my.cnf
     chkconfig mysqld on
     # Start mysqld service
     service mysqld start
@@ -213,7 +224,7 @@ function install_mysql(){
     # Install MySQL
     echo "Start Installing MySQL..."
     yum -y install mysql mysql-server
-    cp -f $cur_dir/conf/my.cnf /etc/my.cnf
+    #cp -f $cur_dir/conf/my.cnf /etc/my.cnf
     chkconfig mysqld on
     # Start mysqld service
     service mysqld start
@@ -262,23 +273,7 @@ DirectoryIndex index.php
 </IfModule>
 EOF
     fi
-    if [ $PHP_version -eq 3 ]; then
-        yum -y install atomic-php56-php atomic-php56-php-cli atomic-php56-php-common atomic-php56-php-devel atomic-php56-php-pdo atomic-php56-php-mysqlnd atomic-php56-php-mcrypt atomic-php56-php-mbstring atomic-php56-php-xml atomic-php56-php-xmlrpc
-        yum -y install atomic-php56-php-gd atomic-php56-php-bcmath atomic-php56-php-imap atomic-php56-php-odbc atomic-php56-php-ldap atomic-php56-php-mhash atomic-php56-php-intl
-        yum -y install atomic-php56-php-snmp atomic-php56-php-soap atomic-php56-php-tidy atomic-php56-php-opcache
-        # Fix php for httpd configuration
-        cat > /etc/httpd/conf.d/php56.conf<<EOF
-<IfModule prefork.c>
-  LoadModule php5_module modules/libphp56.so
-</IfModule>
-<IfModule !prefork.c>
-  LoadModule php5_module modules/libphp56-zts.so
-</IfModule>
-AddHandler php5-script .php
-AddType text/html .php
-DirectoryIndex index.php
-EOF
-    fi
+
     cp -f $cur_dir/conf/php.ini /etc/php.ini
     echo "PHP install completed!"
 }
