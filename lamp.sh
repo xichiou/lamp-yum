@@ -28,7 +28,8 @@ function install_lamp(){
     disable_selinux
     pre_installation_settings
     install_apache
-    install_database
+    #install_database
+    install_mariadb
     install_php
     install_phpmyadmin
     cp -f $cur_dir/lamp.sh /usr/bin/lamp
@@ -91,27 +92,7 @@ function pre_installation_settings(){
     getIP
     echo -e "Your main public IP is\t\033[32m$IP\033[0m"
     echo ""
-    # Choose databese
-    while true
-    do
-    echo "Please choose a version of the Database:"
-    echo -e "\t\033[32m1\033[0m. Install MySQL-5.5(recommend)"
-    echo -e "\t\033[32m2\033[0m. Install MariaDB-5.5"
-    read -p "Please input a number:(Default 1) " DB_version
-    [ -z "$DB_version" ] && DB_version=1
-    case $DB_version in
-        1|2)
-        echo ""
-        echo "---------------------------"
-        echo "You choose = $DB_version"
-        echo "---------------------------"
-        echo ""
-        break
-        ;;
-        *)
-        echo "Input error! Please only input number 1,2"
-    esac
-    done
+    
     # Set MySQL root password
     echo "Please input the root password of MySQL or MariaDB:"
     read -p "(Default password: root):" dbrootpwd
@@ -123,28 +104,6 @@ function pre_installation_settings(){
     echo "Password = $dbrootpwd"
     echo "---------------------------"
     echo ""
-    # Choose PHP version
-    while true
-    do
-    echo "Please choose a version of the PHP:"
-    echo -e "\t\033[32m1\033[0m. Install PHP-5.4"
-    echo -e "\t\033[32m2\033[0m. Install PHP-5.5"
-    echo -e "\t\033[32m3\033[0m. Install PHP-5.6"
-    read -p "Please input a number:(Default 3) " PHP_version
-    [ -z "$PHP_version" ] && PHP_version=3
-    case $PHP_version in
-        1|2|3)
-        echo ""
-        echo "---------------------------"
-        echo "You choose = $PHP_version"
-        echo "---------------------------"
-        echo ""
-        break
-        ;;
-        *)
-        echo "Input error! Please only input number 1,2,3"
-    esac
-    done
     get_char(){
         SAVEDSTTY=`stty -g`
         stty -echo
