@@ -152,10 +152,11 @@ function pre_installation_settings(){
     yum -y remove mariadb*
     yum -y remove php*
     # Set timezone
-    rm -f /etc/localtime
-    ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    ## rm -f /etc/localtime
+    ## ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
     yum -y install ntp
-    ntpdate -d cn.pool.ntp.org
+    ## ntpdate -d cn.pool.ntp.org
+    ntpdate -d tick.stdtime.gov.tw
 }
 
 # Install Apache
