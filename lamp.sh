@@ -130,8 +130,8 @@ function pre_installation_settings(){
     echo -e "\t\033[32m1\033[0m. Install PHP-5.4"
     echo -e "\t\033[32m2\033[0m. Install PHP-5.5"
     echo -e "\t\033[32m3\033[0m. Install PHP-5.6"
-    read -p "Please input a number:(Default 1) " PHP_version
-    [ -z "$PHP_version" ] && PHP_version=1
+    read -p "Please input a number:(Default 3) " PHP_version
+    [ -z "$PHP_version" ] && PHP_version=3
     case $PHP_version in
         1|2|3)
         echo ""
@@ -243,38 +243,9 @@ EOF
 # Install PHP
 function install_php(){
     echo "Start Installing PHP..."
-    yum -y install libjpeg-devel libpng-devel
-    if [ $PHP_version -eq 1 ]; then
-        yum -y install php php-cli php-common php-devel php-pdo php-mysqlnd php-mcrypt php-mbstring php-xml php-xmlrpc
-        yum -y install php-gd php-bcmath php-imap php-odbc php-ldap php-mhash php-intl
-        yum -y install php-xcache php-ioncube-loader php-zend-guard-loader php-snmp php-soap php-tidy
-    fi
-    if [ $PHP_version -eq 2 ]; then
-        yum -y install atomic-php55-php atomic-php55-php-cli atomic-php55-php-common atomic-php55-php-devel atomic-php55-php-pdo atomic-php55-php-mysqlnd atomic-php55-php-mcrypt atomic-php55-php-mbstring atomic-php55-php-xml atomic-php55-php-xmlrpc
-        yum -y install atomic-php55-php-gd atomic-php55-php-bcmath atomic-php55-php-imap atomic-php55-php-odbc atomic-php55-php-ldap atomic-php55-php-mhash atomic-php55-php-intl
-        yum -y install atomic-php55-php-snmp atomic-php55-php-soap atomic-php55-php-tidy atomic-php55-php-opcache
-        # Fix php for httpd configuration
-        cat > /etc/httpd/conf.d/php55.conf<<EOF
-<IfModule prefork.c>
-  LoadModule php5_module modules/libphp55.so
-</IfModule>
-<IfModule !prefork.c>
-  LoadModule php5_module modules/libphp55-zts.so
-</IfModule>
-AddType text/html .php
-DirectoryIndex index.php
-<IfModule  mod_php5.c>
-    <FilesMatch \.php$>
-        SetHandler application/x-httpd-php
-    </FilesMatch>
-    php_value session.save_handler "files"
-    php_value session.save_path    "/var/lib/php/session"
-    php_value soap.wsdl_cache_dir  "/var/lib/php/wsdlcache"
-</IfModule>
-EOF
-    fi
+    yum install php php-gd php-mysql php-mcrypt
 
-    cp -f $cur_dir/conf/php.ini /etc/php.ini
+    #cp -f $cur_dir/conf/php.ini /etc/php.ini
     echo "PHP install completed!"
 }
 # Install phpmyadmin.
