@@ -30,6 +30,9 @@ unzip tadtools.zip
 wget --no-check-certificate https://github.com/tad0616/tad_adm/archive/master.zip -O tad_adm.zip
 unzip tad_adm.zip
 
+wget --no-check-certificate https://github.com/tad0616/tad_themes/archive/master.zip -O tad_themes.zip
+unzip tad_themes.zip
+
 cd XoopsCore25-2.5.8
 chown -R apache.apache htdocs
 mv /var/www/html /var/www/html_org
@@ -41,6 +44,10 @@ mv tadtools-master /var/www/html/modules/tadtools
 
 chown -R apache.apache tad_adm-master
 mv tad_adm-master /var/www/html/modules/tad_adm
+
+chown -R apache.apache tad_themes-master
+mv tad_themes-master /var/www/html/modules/tad_themes
+
 
 
 cd /var/www/html
