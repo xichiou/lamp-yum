@@ -206,6 +206,16 @@ EOF
 function install_php(){
     echo "Start Installing PHP..."
     yum -y install php php-gd php-mysql php-mcrypt
+    
+    sed -i 's/^.*date\.timezone.*=.*/date\.timezone = "Asia\/Taipei"/g' /etc/php.ini
+    sed -i 's/^.*display_errors.*=.*/display_errors = On/g' /etc/php.ini
+    sed -i 's/^.*max_execution_time.*=.*/max_execution_time = 150/g' /etc/php.ini
+    sed -i 's/^.*max_file_uploads.*=.*/max_file_uploads = 300/g' /etc/php.ini
+    sed -i 's/^.*max_input_time.*=.*/max_input_time = 120/g' /etc/php.ini
+    sed -i 's/^.*max_input_vars.*=.*/max_input_vars = 5000/g' /etc/php.ini
+    sed -i 's/^.*memory_limit.*=.*/memory_limit = 240M/g' /etc/php.ini
+    sed -i 's/^.*post_max_size.*=.*/post_max_size = 220M/g' /etc/php.ini
+    sed -i 's/^.*upload_max_filesize.*=.*/upload_max_filesize = 200M/g' /etc/php.ini
 
     #cp -f $cur_dir/conf/php.ini /etc/php.ini
     echo "PHP install completed!"
