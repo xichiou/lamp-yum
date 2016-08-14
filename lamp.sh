@@ -121,7 +121,7 @@ function pre_installation_settings(){
     rpm -Uvh remi-release-7*.rpm
     
     cd /etc/yum.repos.d
-    sed -i '21,29 s/enabled=0/enabled=1/g' remi.repo
+    sed -i '/php56]/,/gpgkey/s/enabled=0/enabled=1/g' /etc/yum.repos.d/remi.repo
     
     yum -y update
     
