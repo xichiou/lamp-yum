@@ -20,3 +20,31 @@ function getIP(){
         IP=`curl -s -4 icanhazip.com`
     fi
 }
+
+wget 'http://120.115.2.90/modules/tad_uploader/index.php?op=dlfile&cfsn=108&cat_sn=16&name=xoopscore25-2.5.8_tw_20160529.zip' -O xoops.zip
+unzip xoops.zip
+
+wget --no-check-certificate https://github.com/tad0616/tadtools/archive/master.zip -O tadtools.zip
+unzip tadtools.zip
+
+wget --no-check-certificate https://github.com/tad0616/tad_adm/archive/master.zip -O tad_adm.zip
+unzip tad_adm.zip
+
+cd XoopsCore25-2.5.8
+chown -R apache.apache htdocs
+mv /var/www/html /var/www/html_org
+mv htdocs /var/www/html
+cd ..
+
+chown -R apache.apache tadtools-master
+mv tadtools-master /var/www/html/modules/tadtools
+
+chown -R apache.apache tad_adm-master
+mv tad_adm-master /var/www/html/modules/tad_adm
+
+
+cd /var/www/html
+mv xoops_* /var/www
+
+
+
