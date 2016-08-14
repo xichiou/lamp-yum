@@ -53,5 +53,15 @@ mv tad_themes-master /var/www/html/modules/tad_themes
 cd /var/www/html
 mv xoops_* /var/www
 
+getIP
+
+clear
+echo ""
+echo 'Congratulations, install XOOPS completed!'
+echo "Your Default Website: http://${IP}"
+echo ""
+echo "Enjoy it! "
+echo ""
+
 
 
