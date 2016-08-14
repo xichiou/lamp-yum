@@ -38,10 +38,8 @@ function install_lamp(){
     echo ""
     echo 'Congratulations, Yum install LAMP completed!'
     echo "Your Default Website: http://${IP}"
-    #echo 'Default WebSite Root Dir: /data/www/default'
     echo "MySQL root password:$dbrootpwd"
     echo ""
-    #echo "Welcome to visit:https://teddysun.com/lamp-yum"
     echo "Enjoy it! "
     echo ""
 }
@@ -71,12 +69,7 @@ function pre_installation_settings(){
     echo "# Author: Teddysun <i@teddysun.com>                         #"
     echo "#############################################################"
     echo ""
-    # Install Atomic repository
-    #rpm -qa | grep "atomic-release" &>/dev/null
-    #if [ $? -ne 0 ]; then
-    #    wget -qO- http://www.atomicorp.com/installers/atomic | bash
-    #fi
-    
+
     # Display Public IP
     echo "Getting Public IP address..."
     getIP
@@ -127,15 +120,7 @@ function pre_installation_settings(){
     echo ""
     echo "Press any key to start...or Press Ctrl+C to cancel"
     char=`get_char`
-    # Remove Packages
-    #yum -y remove httpd*
-    #yum -y remove mysql*
-    #yum -y remove mariadb*
-    #yum -y remove php*
-    # Set timezone
-    ## rm -f /etc/localtime
-    ## ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-    
+
     yum -y install unzip wget
     yum -y install epel-release
     wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
@@ -144,7 +129,6 @@ function pre_installation_settings(){
     #yum -y update
     
     yum -y install ntp
-    ## ntpdate -d cn.pool.ntp.org
     ntpdate -d tick.stdtime.gov.tw
 }
 
@@ -186,27 +170,6 @@ EOF
     echo "MariaDB Install completed!"
 }
 
-# Install MySQL
-function install_mysql(){
-    # Install MySQL
-    echo "Start Installing MySQL..."
-    yum -y install mysql mysql-server
-    #cp -f $cur_dir/conf/my.cnf /etc/my.cnf
-    chkconfig mysqld on
-    # Start mysqld service
-    service mysqld start
-    /usr/bin/mysqladmin password $dbrootpwd
-    /usr/bin/mysql -uroot -p$dbrootpwd <<EOF
-drop database if exists test;
-delete from mysql.user where user='';
-update mysql.user set password=password('$dbrootpwd') where user='root';
-delete from mysql.user where not (user='root') ;
-flush privileges;
-exit
-EOF
-    echo "MySQL Install completed!"
-}
-
 # Install PHP
 function install_php(){
     echo "Start Installing PHP..."
@@ -246,71 +209,6 @@ function install_phpmyadmin(){
 
     #Start httpd service
     systemctl restart httpd
-}
-
-# Uninstall lamp
-function uninstall_lamp(){
-    echo "Warning! All of your data will be deleted..."
-    echo "Are you sure uninstall LAMP? (y/n)"
-    read -p "(Default: n):" uninstall
-    if [ -z $uninstall ]; then
-        uninstall="n"
-    fi
-    if [[ "$uninstall" = "y" || "$uninstall" = "Y" ]]; then
-        clear
-        echo "==========================="
-        echo "Yes, I agreed to uninstall!"
-        echo "==========================="
-        echo ""
-    else
-        echo ""
-        echo "============================"
-        echo "You cancelled the uninstall!"
-        echo "============================"
-        exit
-    fi
-
-    get_char(){
-        SAVEDSTTY=`stty -g`
-        stty -echo
-        stty cbreak
-        dd if=/dev/tty bs=1 count=1 2> /dev/null
-        stty -raw
-        stty echo
-        stty $SAVEDSTTY
-    }
-    echo "Press any key to start uninstall...or Press Ctrl+c to cancel"
-    char=`get_char`
-    echo ""
-    if [[ "$uninstall" = "y" || "$uninstall" = "Y" ]]; then
-        cd ~
-        CHECK_MARIADB=$(mysql -V | grep -i 'MariaDB')
-        service httpd stop
-        service mysqld stop
-        yum -y remove httpd*
-        if [ -z $CHECK_MARIADB ]; then
-            yum -y remove mysql*
-        else
-            yum -y remove mariadb*
-        fi
-        if [ -s /usr/bin/atomic-php55-php ]; then
-            yum -y remove atomic-php55-php*
-        elif [ -s /usr/bin/atomic-php56-php ]; then
-            yum -y remove atomic-php56-php*
-        else
-            yum -y remove php*
-        fi
-        rm -rf /data/www/default/phpmyadmin
-        rm -rf /etc/httpd
-        rm -f /usr/bin/lamp
-        rm -f /etc/my.cnf.rpmsave
-        rm -f /etc/php.ini.rpmsave
-        echo "Successfully uninstall LAMP!!"
-    else
-        echo ""
-        echo "Uninstall cancelled, nothing to do..."
-        echo ""
-    fi
 }
 
 # Add apache virtualhost
@@ -443,9 +341,6 @@ action=$1
 case "$action" in
 install)
     install_lamp
-    ;;
-uninstall)
-    uninstall_lamp
     ;;
 add)
    vhost_add
