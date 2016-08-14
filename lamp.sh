@@ -94,6 +94,27 @@ function pre_installation_settings(){
     echo "Password = $dbrootpwd"
     echo "---------------------------"
     echo ""
+     # Choose PHP version
+    while true
+    do
+    echo "Please choose a version of the PHP:"
+    echo -e "\t\033[32m1\033[0m. Install PHP-5.6"
+    echo -e "\t\033[32m2\033[0m. Install PHP-7.0"
+    read -p "Please input a number:(Default 1) " PHP_version
+    [ -z "$PHP_version" ] && PHP_version=1
+    case $PHP_version in
+        1|2)
+        echo ""
+        echo "---------------------------"
+        echo "You choose = $PHP_version"
+        echo "---------------------------"
+        echo ""
+        break
+        ;;
+        *)
+        echo "Input error! Please only input number 1,2"
+    esac
+    done
     get_char(){
         SAVEDSTTY=`stty -g`
         stty -echo
@@ -120,10 +141,7 @@ function pre_installation_settings(){
     wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
     rpm -Uvh remi-release-7*.rpm
     
-    cd /etc/yum.repos.d
-    sed -i '/php56]/,/gpgkey/s/enabled=0/enabled=1/g' /etc/yum.repos.d/remi.repo
-    
-    yum -y update
+    #yum -y update
     
     yum -y install ntp
     ## ntpdate -d cn.pool.ntp.org
@@ -135,18 +153,8 @@ function install_apache(){
     # Install Apache
     echo "Start Installing Apache..."
     yum -y install httpd
-    #cp -f $cur_dir/conf/httpd.conf /etc/httpd/conf/httpd.conf
-    #rm -f /etc/httpd/conf.d/welcome.conf /data/www/error/noindex.html
     systemctl enable httpd
     systemctl start httpd
-    #mkdir -p /data/www/default
-    #chown -R apache:apache /data/www/default
-    #touch /etc/httpd/conf.d/none.conf
-    #cp -f $cur_dir/conf/index.html /data/www/default/index.html
-    #cp -f $cur_dir/conf/lamp.gif /data/www/default/lamp.gif
-    #cp -f $cur_dir/conf/p.php /data/www/default/p.php
-    #cp -f $cur_dir/conf/jquery.js /data/www/default/jquery.js
-    #cp -f $cur_dir/conf/phpinfo.php /data/www/default/phpinfo.php
     echo "Apache Install completed!"
 }
 
@@ -164,10 +172,7 @@ function install_mariadb(){
     # Install MariaDB
     echo "Start Installing MariaDB..."
     yum -y install mariadb mariadb-server
-    #cp -f $cur_dir/conf/my.cnf /etc/my.cnf
-    #chkconfig mysqld on
     systemctl enable mariadb
-    # Start mysqld service
     systemctl start mariadb
     /usr/bin/mysqladmin password $dbrootpwd
     /usr/bin/mysql -uroot -p$dbrootpwd <<EOF
@@ -205,6 +210,18 @@ EOF
 # Install PHP
 function install_php(){
     echo "Start Installing PHP..."
+    
+    if [ $PHP_version -eq 1 ]; then
+     remi-php70.repo
+        sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/remi-php70.repo
+        sed -i '/php56]/,/gpgkey/s/enabled=0/enabled=1/g' /etc/yum.repos.d/remi.repo
+    fi
+    
+    if [ $PHP_version -eq 2 ]; then
+        sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/remi.repo
+        sed -i '/php70]/,/gpgkey/s/enabled=0/enabled=1/g' /etc/yum.repos.d/remi-php70.repo
+    fi
+    
     yum -y install php php-gd php-mysql php-mcrypt
     
     sed -i 's/^.*date\.timezone.*=.*/date\.timezone = "Asia\/Taipei"/g' /etc/php.ini
@@ -216,17 +233,17 @@ function install_php(){
     sed -i 's/^.*memory_limit.*=.*/memory_limit = 240M/g' /etc/php.ini
     sed -i 's/^.*post_max_size.*=.*/post_max_size = 220M/g' /etc/php.ini
     sed -i 's/^.*upload_max_filesize.*=.*/upload_max_filesize = 200M/g' /etc/php.ini
-
-    #cp -f $cur_dir/conf/php.ini /etc/php.ini
+    
+    systemctl reload httpd
+    
     echo "PHP install completed!"
 }
 # Install phpmyadmin.
 function install_phpmyadmin(){
     yum -y install phpMyAdmin
-
     #vi /etc/httpd/conf.d/phpMyAdmin.conf
     #line 17: 127.0.0.1 => 127.0.0.1 192 172
-    
+
     #Start httpd service
     systemctl restart httpd
 }
