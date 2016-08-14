@@ -32,8 +32,8 @@ function install_lamp(){
     install_mariadb
     install_php
     install_phpmyadmin
-    cp -f $cur_dir/lamp.sh /usr/bin/lamp
-    chmod +x /usr/bin/lamp
+    #cp -f $cur_dir/lamp.sh /usr/bin/lamp
+    #chmod +x /usr/bin/lamp
     clear
     echo ""
     echo 'Congratulations, Yum install LAMP completed!'
